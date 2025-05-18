@@ -4,13 +4,9 @@
 # This would be called by your CI/CD pipeline
 
 # Variables
-SERVER_DIR="../server"
-SSH_KEY="../infrastructure/q_key"
-
-# Get the instance IP from Terraform output
-cd ../infrastructure
-INSTANCE_IP=$(terraform output -raw instance_ip)
-cd ../ci-cd
+SERVER_DIR="server"
+SSH_KEY="$HOME/.ssh/ec2_key"
+INSTANCE_IP="44.248.74.179"
 
 echo "Deploying to EC2 instance at $INSTANCE_IP..."
 
@@ -25,11 +21,11 @@ docker save q-command-center:latest > q-command-center.tar
 
 # Copy the Docker image to the server
 echo "Copying Docker image to server..."
-scp -i $SSH_KEY q-command-center.tar ec2-user@$INSTANCE_IP:/home/ec2-user/app/
+scp -i $SSH_KEY -o StrictHostKeyChecking=no q-command-center.tar ec2-user@$INSTANCE_IP:/home/ec2-user/app/
 
 # SSH into the server and update the application
 echo "Updating application on server..."
-ssh -i $SSH_KEY ec2-user@$INSTANCE_IP << EOF
+ssh -i $SSH_KEY -o StrictHostKeyChecking=no ec2-user@$INSTANCE_IP << EOF
   cd /home/ec2-user/app
   # Load the Docker image
   sudo docker load < q-command-center.tar
