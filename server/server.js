@@ -19,6 +19,17 @@ app.get('/api/info', (req, res) => {
   });
 });
 
+// New status endpoint
+app.get('/api/status', (req, res) => {
+  res.json({
+    status: 'operational',
+    environment: 'production',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    message: 'This is a new endpoint added via CI/CD pipeline'
+  });
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
